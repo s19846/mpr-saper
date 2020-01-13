@@ -1,0 +1,104 @@
+:root {
+    --main-border: 3px solid black;
+    --inside-border: 2px solid grey;
+    --box-border: inset 0 0 0 1px rgba(32, 32, 32, 0.32);
+}
+
+.app {
+    margin: auto;
+    position: relative;
+    border: var(--main-border);
+    height: 100%;
+    width: 606px;
+    min-height: 600px;
+    min-width: 600px;
+}
+
+.menu .game {
+    position: absolute;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: var(--main-border);
+    height: 80px;
+    top: 0;
+    position: relative;
+}
+
+.menu > .timer {
+    width: 120px;
+    border-left: var(--inside-border);
+    height: 100%;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 2em;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu > .indicator {
+    height: 100%;
+    width: 80px;
+    visibility: hidden;
+    color: red;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 4em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.menu > .counter {
+    border-right: var(--inside-border);
+    height: 100%;
+    width: 120px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 2em;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game {
+    visibility: hidden;
+    display: flex;
+    flex-flow: column;
+    bottom: 0;
+    height: 600px;
+    position: relative;
+}
+
+.game > .row {
+    display: flex;
+    flex-direction: row;
+    height: 20px;
+    padding-left: 15px;
+}
+
+.game > .row > .box {
+    -webkit-box-shadow: var(--box-border);
+    -moz-box-shadow: var(--box-border);
+    box-shadow: var(--box-border);
+    height: 100%;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #525252;
+
+}
+
+.game > .row > .box.revealed {
+    -webkit-box-shadow: var(--box-border);
+    -moz-box-shadow: var(--box-border);
+    box-shadow: var(--box-border);
+    height: 100%;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightgray;
+}

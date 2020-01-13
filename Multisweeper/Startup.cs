@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SignalRControl.Hubs;
+using Multisweeper.Services;
+using Multisweeper.Models;
 
 namespace Multisweeper
 {
@@ -44,6 +46,10 @@ namespace Multisweeper
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            GameBoard gameBoard = new GameBoard();
+            GameBoardHandler gameBoardHandler = new GameBoardHandler();
+            gameBoardHandler.InitBoard(gameBoard);
 
             app.UseRouting();
 

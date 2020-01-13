@@ -1,10 +1,23 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "MultiSweeper";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="app">
+    <div class="menu">
+        <div class="counter" id="counter">
+
+        </div>
+        <div class="indicator" id="indicator">
+            X
+        </div>
+        <div class="timer" id="timer">
+            0
+        </div>
+    </div>
+    <div class="game" id="game">
+        <!-- 30 rows --> <!-- 30 boxes in a row -->
+
+    </div>
 </div>
