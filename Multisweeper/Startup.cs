@@ -47,10 +47,6 @@ namespace Multisweeper
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            GameBoard gameBoard = new GameBoard();
-            GameBoardHandler gameBoardHandler = new GameBoardHandler();
-            gameBoardHandler.InitBoard(gameBoard);
-
             app.UseRouting();
 
             app.UseAuthorization();

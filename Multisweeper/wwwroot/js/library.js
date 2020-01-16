@@ -2,61 +2,34 @@ class Library {
     /**
      * @returns {Minefield}
      */
-    initGamefield() {
+    initGamefield(board) {
         let gamefield = new Minefield();
-        let minefieldObj = this.generateMines();
-        let board = this.generateBoard(minefieldObj.minefield);
-        gamefield.setBoard(board);
-        gamefield.setMines(minefieldObj.mines);
+        let data = this.convertBoard(board);
+        gamefield.setBoard(data.convertedBoard);
+        gamefield.setMines(data.mines);
         return gamefield;
     }
 
-    /**
-     * @param minefield
-     * @return {[][]}
-     */
-    generateBoard(minefield) {
+    convertBoard(serverBoard) {
+        let mineCount = 0;
         let board = [];
-        for (let i=0;i<30;i++) {
+        let rowList = serverBoard.RowList;
+        for (let i = 0; i < 30; i++) {
             let row = [];
-            for (let j=0;j<30;j++) {
-                row[j] = this.fieldObject(j, i, minefield[j][i], this.countLocalMines(minefield, j, i));
+            let boxList = rowList[i].BoxList;
+            for (let j = 0; j < 30; j++) {
+                let box = boxList[j];
+                row[j] = this.fieldObject(box.X, box.Y, box.Mine, box.SurroundingMines);
+                if (box.Mine === true) {
+                    mineCount++;
+                }
             }
             board[i] = row;
         }
-        return board;
-    }
-
-    /**
-     * @returns {{mines: number, minefield: [][]}}
-     */
-    generateMines() {
-        let minefield = [];
-        let mines = 0;
-        for (let i = 0; i < 30; i++) {
-            let row = [];
-            for (let j = 0; j < 30; j++) {
-                row[j] = this.generateMine();
-                if (row[j]) {
-                    mines++;
-                }
-            }
-            minefield[i] = row;
-        }
         return {
-            minefield: minefield,
-            mines: mines
+            convertedBoard: board,
+            mines: mineCount
         };
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    generateMine() {
-        // From 1 to 100
-        let randNum = Math.floor(Math.random() * 100) + 1;
-        // % chance for a mine
-        return randNum <= 12;
     }
 
     /**
@@ -73,57 +46,6 @@ class Library {
             mine: mine,
             surroundingMines: surroundingMines
         }
-    }
-
-    /**
-     * @param minefield
-     * @param x
-     * @param y
-     * @returns {number}
-     */
-    countLocalMines(minefield, x, y) {
-        let count = 0;
-        if (x > 0) {
-            if (minefield[x-1][y]) {
-                count++;
-            }
-            if (y < 29) {
-                if (minefield[x - 1][y + 1]) {
-                    count++;
-                }
-            }
-            if (y > 0) {
-                if (minefield[x-1][y-1]) {
-                    count++;
-                }
-            }
-        }
-        if (y < 29) {
-            if (minefield[x][y + 1]) {
-                count++;
-            }
-        }
-        if (y > 0) {
-            if (minefield[x][y - 1]) {
-                count++;
-            }
-        }
-        if (x < 29) {
-            if (minefield[x+1][y]) {
-                count++;
-            }
-            if (y < 29) {
-                if (minefield[x+1][y+1]) {
-                    count++;
-                }
-            }
-            if (y > 0) {
-                if (minefield[x+1][y - 1]) {
-                    count++;
-                }
-            }
-        }
-        return count;
     }
 
     /**

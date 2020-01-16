@@ -4,6 +4,11 @@
     --box-border: inset 0 0 0 1px rgba(32, 32, 32, 0.32);
 }
 
+.game-screen {
+    display: flex;
+    flex-flow: row;
+}
+
 .app {
     margin: auto;
     position: relative;

@@ -37,7 +37,7 @@ namespace Multisweeper.Services
         {
             Random RandomGenerator = new Random();
             int RandNum = RandomGenerator.Next(1, 100);
-            return RandNum <= 12;
+            return RandNum <= 13;
         }
 
         private List<Box> GetSurroundingBoxes(GameBoard board, Box Box)

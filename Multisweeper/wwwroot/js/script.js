@@ -2,60 +2,121 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/multiplayerHub").b
 
 let library = new Library();
 
-/** @type {Minefield} */
-let gameBoard = library.initGamefield();
-
 let gameDiv = document.getElementById("game");
-
-let gameFinished = false;
-
-for (let i=0;i<30;i++) {
-    let board = gameBoard.getBoard();
-    let boardRow = board[i];
-    let row = document.createElement("div");
-    row.className = "row";
-    row.id = "" + i;
-    for (let j=0;j<30;j++) {
-        let field = boardRow[j];
-        let box = document.createElement("div");
-        box.className = "box";
-        box.id = library.convertLocationToId(i, j);
-        box.setAttribute('x', field.x);
-        box.setAttribute('y', field.y);
-        box.setAttribute('mine', field.mine);
-        box.setAttribute('surroundingMines', field.surroundingMines);
-        box.addEventListener('click', clickEventBox);
-        row.appendChild(box);
-    }
-    gameDiv.appendChild(row);
-}
-
-let counterDiv = document.getElementById('counter');
-counterDiv.innerHTML = gameBoard.leftEmptyFields;
-
-let seconds = 0;
 let timerDiv = document.getElementById('timer');
+let indicatorDiv = document.getElementById('indicator');
+let gameFinished = false;
+let seconds = 0;
+let cancel = 0;
+let counterDiv;
+let gameBoard;
+
+connection.on("ReceiveMessage", function (user, message) {
+    console.log(user + message);
+});
+
+connection.on("ReceiveClick", function (x, y) {
+    let targetBox = getTargetBox(x, y);
+    clickBox(targetBox, true);
+});
+
+connection.on("CoronateTheSucker", function (user) {
+    console.log("user");
+    let div = document.createElement("div");
+    let a = document.createElement("a");
+    a.innerHTML = user
+    div.appendChild(a);
+    document.getElementById("player-list").appendChild(div);
+});
+
+connection.on("StartGame", function (serializedBoard) {
+    let data = JSON.parse(serializedBoard);
+    gameBoard = library.initGamefield(data);
+
+    for (let i = 0; i < 30; i++) {
+        let board = gameBoard.getBoard();
+        let boardRow = board[i];
+        let row = document.createElement("div");
+        row.className = "row";
+        row.id = "" + i;
+        for (let j = 0; j < 30; j++) {
+            let field = boardRow[j];
+            let box = document.createElement("div");
+            box.className = "box";
+            box.id = library.convertLocationToId(i, j);
+            box.setAttribute('x', field.x);
+            box.setAttribute('y', field.y);
+            box.setAttribute('mine', field.mine);
+            box.setAttribute('surroundingMines', field.surroundingMines);
+            box.addEventListener('click', clickEventBox);
+            row.appendChild(box);
+        }
+        gameDiv.appendChild(row);
+    }
+
+    counterDiv = document.getElementById('counter');
+    counterDiv.innerHTML = gameBoard.leftEmptyFields;
+
+    startGame();
+});
+
+connection.on("NewPlayerToList", function (name) {
+    let li = document.createElement("li");
+    li.textContent = name
+    document.getElementById("player-list").appendChild(li);
+});
+
+connection.start().then(function () {
+    document.getElementById("sendButton").disabled = false;
+}).catch(function (err) {
+    return console.error(err.toString());
+});
+
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    let user = document.getElementById("userInput").value;
+    connection.invoke("SendGame").catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+document.getElementById("setName").addEventListener("click", function (event) {
+    let userInput = document.getElementById("userInput");
+    connection.invoke("AddPlayer", userInput.value).catch(function (err) {
+        return console.error(err.toString());
+    });
+    userInput.readOnly = true;
+    let userButton = document.getElementById("setName");
+    userButton.style.visibility = "hidden";
+    event.preventDefault();
+});
 
 function incrementSeconds() {
     seconds += 1;
     timerDiv.innerText = seconds;
 }
 
-let indicatorDiv = document.getElementById('indicator');
-
-let cancel = 0;
-
 function startGame() {
     cancel = setInterval(incrementSeconds, 1000);
+    gameDiv.style.visibility = "visible";
+}
+
+function getTargetBox(x, y) {
+    let target = document.querySelector("[x='" + x + "'][y='" + y + "']");
+    return target;
 }
 
 function clickEventBox(event) {
     clickBox(event.target);
 }
 
-function clickBox(element) {
+function clickBox(element, socket = false) {
     if (gameFinished) {
         return false;
+    }
+
+    if (socket === false) {
+        connection.invoke("SendClick", element.attributes.x.value, element.attributes.y.value);
     }
 
     if (element.classList.contains("revealed")) {
