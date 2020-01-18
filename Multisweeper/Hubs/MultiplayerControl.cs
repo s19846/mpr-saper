@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Multisweeper.Services;
 using Multisweeper.Models;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using SQLite;
 using Multisweeper.Entities;
@@ -13,10 +12,13 @@ namespace SignalRControl.Hubs
     public class MultiplayerHub : Hub
     {
         private SQLiteConnection sql;
+        private GameBoardHandler handler;
 
         public MultiplayerHub(SQLiteConnection sql)
         {
             this.sql = sql;
+            IRandomizer randomizer = new Randomizer();
+            this.handler = new GameBoardHandler(randomizer);
         }
 
         public GameBoard currentBoard;
@@ -34,10 +36,7 @@ namespace SignalRControl.Hubs
         public async Task SendGame()
         {
             GameBoard gameBoard = new GameBoard();
-            IRandomizer randomizer = new Randomizer();
-            GameBoardHandler gameBoardHandler = new GameBoardHandler(randomizer);
-            gameBoardHandler.InitBoard(gameBoard);
-            this.currentBoard = gameBoard;
+            this.handler.InitBoard(gameBoard);
             string serializedBoard;
             serializedBoard = JsonSerializer.Serialize(gameBoard);
             await Clients.All.SendAsync("StartGame", serializedBoard);
