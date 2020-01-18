@@ -25,7 +25,8 @@ namespace SignalRControl.Hubs
         public async Task SendGame()
         {
             GameBoard gameBoard = new GameBoard();
-            GameBoardHandler gameBoardHandler = new GameBoardHandler();
+            IRandomizer randomizer = new Randomizer();
+            GameBoardHandler gameBoardHandler = new GameBoardHandler(randomizer);
             gameBoardHandler.InitBoard(gameBoard);
             this.currentBoard = gameBoard;
             string serializedBoard;

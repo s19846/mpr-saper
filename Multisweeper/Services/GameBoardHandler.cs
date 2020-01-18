@@ -6,6 +6,13 @@ namespace Multisweeper.Services
 {
     public class GameBoardHandler
     {
+        IRandomizer randomizer;
+
+        public GameBoardHandler(IRandomizer randomizer)
+        {
+            this.randomizer = randomizer;
+        }
+
         public GameBoard InitBoard(GameBoard board)
         {
             this.PopulateBoardWithMines(board);
@@ -35,9 +42,7 @@ namespace Multisweeper.Services
 
         private Boolean GenerateMine()
         {
-            Random RandomGenerator = new Random();
-            int RandNum = RandomGenerator.Next(1, 100);
-            return RandNum <= 13;
+            return this.randomizer.generateRandomNumber() <= 13;
         }
 
         private List<Box> GetSurroundingBoxes(GameBoard board, Box Box)
