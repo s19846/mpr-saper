@@ -32,6 +32,8 @@ connection.on("CoronateTheSucker", function (user) {
 connection.on("StartGame", function (serializedBoard) {
     let data = JSON.parse(serializedBoard);
     gameBoard = library.initGamefield(data);
+    let startButton = document.getElementById("sendButton");
+    startButton.style.visibility = "hidden";
 
     for (let i = 0; i < 30; i++) {
         let board = gameBoard.getBoard();
