@@ -11,6 +11,9 @@ using Microsoft.Extensions.Hosting;
 using SignalRControl.Hubs;
 using Multisweeper.Services;
 using Multisweeper.Models;
+using SQLite;
+using Multisweeper.Entities;
+using System.IO;
 
 namespace Multisweeper
 {
@@ -26,8 +29,12 @@ namespace Multisweeper
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var databasePath = "MultiSweeper.db";
+            var db = new SQLiteConnection(databasePath);
+
             services.AddRazorPages();
             services.AddSignalR();
+            services.AddSingleton(db);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +63,10 @@ namespace Multisweeper
                 endpoints.MapRazorPages();
                 endpoints.MapHub<MultiplayerHub>("/multiplayerHub");
             });
+
+            var databasePath = "MultiSweeper.db";
+            var db = new SQLiteConnection(databasePath);
+            db.CreateTable<Score>();
         }
     }
 }

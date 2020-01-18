@@ -75,7 +75,6 @@ connection.start().then(function () {
 });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    let user = document.getElementById("userInput").value;
     connection.invoke("SendGame").catch(function (err) {
         return console.error(err.toString());
     });
@@ -142,6 +141,12 @@ function clickBox(element, socket = false) {
 }
 
 function endGame() {
+    let user = document.getElementById("userInput").value;
+    let score = document.getElementById("counter").innerHTML;
+
+    connection.invoke("LostTheGame", user, score).catch(function (err) {
+        return console.error(err.toString());
+    });
     clearInterval(cancel);
     let boxes = document.querySelectorAll('.box');
     for (let i=0;i<boxes.length;i++) {

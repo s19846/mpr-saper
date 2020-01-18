@@ -5,11 +5,20 @@ using Multisweeper.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
+using SQLite;
+using Multisweeper.Entities;
 
 namespace SignalRControl.Hubs
 {
     public class MultiplayerHub : Hub
     {
+        private SQLiteConnection sql;
+
+        public MultiplayerHub(SQLiteConnection sql)
+        {
+            this.sql = sql;
+        }
+
         public GameBoard currentBoard;
 
         public async Task SendMessage(string user, string message)
@@ -39,8 +48,13 @@ namespace SignalRControl.Hubs
             await Clients.All.SendAsync("NewPlayerToList", user);
         }
 
-        public async Task LostTheGame(string user)
+        public async Task LostTheGame(string user, string score)
         {
+            this.sql.Insert(new Score()
+            {
+                User = user,
+                Points = score
+            });
             await Clients.All.SendAsync("CoronateTheSucker", user);
         }
     }
